@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nikhil Satpute · Portfolio
 
-## Getting Started
+Personal portfolio built with Next.js 16 (App Router), React 19 and Tailwind CSS 4. Fully static.
 
-First, run the development server:
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set `NEXT_PUBLIC_SITE_URL` to the deployed domain (e.g. `https://nikhilsatpute.dev`) so social previews, the sitemap and canonical URLs are absolute.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy to Cloudflare (free)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The site builds to static files in `out/` and is served by Cloudflare Workers static assets, which is free.
 
-## Learn More
+```bash
+npx wrangler@4 login     # one time, opens the browser
+npm run deploy           # builds and uploads
+```
 
-To learn more about Next.js, take a look at the following resources:
+The first deploy prints your URL, e.g. `https://nikhil-portfolio.<account>.workers.dev`.
+Put it in a `.env.production` file so social previews and the sitemap use it, then deploy again:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+NEXT_PUBLIC_SITE_URL=https://nikhil-portfolio.<account>.workers.dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`npm run preview` runs the built site locally on Cloudflare's runtime before deploying.
 
-## Deploy on Vercel
+## Updating content
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+All text lives in `content/`. No component changes are needed for routine updates.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| What | Where |
+| --- | --- |
+| Name, email, socials, availability, summary, skills, experience, services | `content/profile.ts` |
+| Projects and websites | `content/projects.ts` |
+| Resume PDF | replace `public/resume/Nikhil_Satpute_Resume.pdf` |
+
+**Project screenshots:** add an image to `public/projects/` and set `image: "/projects/<file>.png"` on the project. Until then a generated device preview is shown.
+
+**Project links:** add entries to a project's `links` array (`kind`: `play`, `web`, `github` or `appstore`). Apps with a `play` link also appear in the "On Google Play" list.
+
+**Ownership badge:** `independent`, `lead` or `team` controls the badge and which group a project appears in.
+
+## Structure
+
+```
+app/                 layout, page, metadata (icon, OG image, robots, sitemap)
+wrangler.jsonc       Cloudflare deploy config
+components/          shared UI, header, footer, project card
+components/sections/ one file per page section
+content/             all portfolio data
+```
